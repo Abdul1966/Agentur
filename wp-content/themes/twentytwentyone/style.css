@@ -5987,3 +5987,11 @@ footer {
 .is-IE .post-thumbnail .wp-post-image {
 	min-width: auto;
 }
+
+/*-----------------custom styles-------------------------*/
+
+.row80{
+	width:80%;
+	height: auto;
+	margin:0 10%;
+}

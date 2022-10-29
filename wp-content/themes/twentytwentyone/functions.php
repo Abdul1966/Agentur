@@ -640,3 +640,19 @@ function twentytwentyone_add_ie_class() {
 	<?php
 }
 add_action( 'wp_footer', 'twentytwentyone_add_ie_class' );
+
+//------------------custom functions----------------------------------
+
+add_action('json_output', 'cb_json_output', 10);
+
+function cb_json_output(){
+	echo get_template_directory();
+	$json = file_get_contents(get_template_directory() .'/json-data.json', false);
+	$json = json_decode($json);
+	echo '</br>';
+	for($i=0; $i< count($json); $i++){
+		echo $i+1 . "   " . $json[$i]->timestamp;
+		echo '</br>';
+	}
+	
+}

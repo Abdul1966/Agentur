@@ -1,5 +1,3 @@
-<?php get_header();?>
 
-<h1>Json output</h1>
+<div class="row80"><?php do_action('json_output');?></div>
 
-<?php get_footer();?>
