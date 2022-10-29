@@ -646,13 +646,68 @@ add_action( 'wp_footer', 'twentytwentyone_add_ie_class' );
 add_action('json_output', 'cb_json_output', 10);
 
 function cb_json_output(){
-	echo get_template_directory();
 	$json = file_get_contents(get_template_directory() .'/json-data.json', false);
 	$json = json_decode($json);
-	echo '</br>';
-	for($i=0; $i< count($json); $i++){
-		echo $i+1 . "   " . $json[$i]->timestamp;
-		echo '</br>';
+	$result =array();
+	$k=0;
+	for($i=0; $i<count($json); $i++){
+		$output = new stdClass();
+		$output->id=($json[$i]->id);
+		$output->title=($json[$i]->title);
+		$output->about=($json[$i]->about);
+		$output->organizer=($json[$i]->organizer);
+		$output->timestamp=($json[$i]->timestamp);
+		$output->email=($json[$i]->email);
+		$output->address=($json[$i]->address);
+		$output->latitude=($json[$i]->latitude);
+		$output->longitude=($json[$i]->longitude);
+		for($p=0; $p<count($json[$i]->tags);$p++){
+			$output->tags[$p]=$json[$i]->tags[$p];
+		}
+		if(date_difference($json[$i]->timestamp)>=0){		
+			$result[$k]=$output;
+			$k++;
+		}
 	}
+
+
+	$result = sortArray($result);
+
+	$result_json = json_encode($result);
+	echo $result_json;
 	
 }
+	function date_difference($eventDate){
+		$eventDate = date_create($eventDate);
+		$curDate =date("Y-m-d");
+		$curDate = date_create($curDate);
+		$duration = date_diff($curDate, $eventDate);
+		$duration->format("%R%a days");
+		$duration = $duration->format("%R%a");
+		return $duration;
+	}
+
+	function sortArray($sample=array()){
+		$maxDays=0;
+		$result=array();
+		$k=0;
+
+		for($i=0; $i<count($sample); $i++){
+			$days = date_difference($sample[$i]->timestamp);
+			if($days>=$maxDays){
+				$maxDays=$days;
+			}			
+		}	
+
+		for($i=0; $i<$maxDays+1; $i++){
+			for($p=0; $p<count($sample); $p++){
+				if(date_difference($sample[$p]->timestamp)==$i){
+					$result[$k] = $sample[$p];
+					$k++;
+				}
+			}
+
+		}
+
+		return $result;
+	}
